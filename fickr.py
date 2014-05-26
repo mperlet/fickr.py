@@ -70,7 +70,7 @@ class Fickr(object):
     def get_photos(self):
         try:
             print('use flickrit: %s\n' % self.flickrit_url)
-            self.use_flickit(sd)
+            self.use_flickit()
         except:
             print('error flickrit, parse: %s\n' % self.photostream_url)
             self.use_photostream()
