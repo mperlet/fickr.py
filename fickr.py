@@ -6,7 +6,6 @@ import os
 import re
 import unicodedata
 import urllib
-import threading
 import os.path
 import json
 
@@ -55,9 +54,8 @@ class Fickr(object):
         if not os.path.exists(path):
             os.mkdir(path)
         if not os.path.isfile(filename):
-            download_thread = threading.Thread(target=self.download_pic, args=[photo_url, filename])
-            download_thread.start()
             print(u'Download: %s' % photo_title)
+            self.download_pic(photo_url, filename)
         else:
             print(u'Exists:   %s' % photo_title)
 
