@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from pyquery import PyQuery as pq
 import sys
 import os
 import re
@@ -29,7 +28,7 @@ class Fickr(object):
 
     def get_name_and_quality(self):
         if len(sys.argv) == 1:
-            print(u'Username not found, run "./ficr.py <username> <size>"')
+            print(u'Username not found, run "./ficr <username> <size>"')
             print(u'Sizes: o->Original, q->150x150, k->2048x???')
             exit(1)
         else:
@@ -41,6 +40,10 @@ class Fickr(object):
         return [username, size]
 
     def use_photostream(self):
+        try:
+            from pyquery import PyQuery as pq
+        except:
+            print('please install pyQuery: pip install pyquery')
         doc = pq(url='%s%s' % (self.photostream_url, self.__username))
         for d in doc('.photo-display-item'):
             doc = pq(url='%s/%s/%s/sizes/%s/' % (self.photostream_url, self.__username,d.attrib['data-photo-id'],self.__size))
@@ -73,5 +76,6 @@ class Fickr(object):
             print('error flickrit, parse: %s\n' % self.photostream_url)
             self.use_photostream()
 
-#Execute
-Fickr().get_photos()
+if __name__ == "__main__":
+    #Execute
+    Fickr().get_photos()
