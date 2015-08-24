@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import sys
 import os
 import re
@@ -16,11 +17,14 @@ class Fickr(object):
     def __init__(self):
         self.__username, self.__size = self.get_name_and_quality()
 
+    __valid_sizes = ['sq', 'q', 't', 's', 'n', 'm', 'z', 'c',
+                     'l', 'q', 'k', 'o']
+
     def slugify(self, value):
         value = unicodedata.normalize('NFKD', value)
         value = value.encode('ascii', 'ignore').decode('ascii')
-        value = re.sub('[^\w\s-]', '', value).strip().lower()
-        value = re.sub('[-\s]+', '-', value)
+        value = re.sub(r'[^\w\s-]', '', value).strip().lower()
+        value = re.sub(r'[-\s]+', '-', value)
         return value
 
     def download_pic(self, url, name):
@@ -28,25 +32,30 @@ class Fickr(object):
 
     def get_name_and_quality(self):
         if len(sys.argv) == 1:
-            print(u'Username not found, run "./ficr <username> <size>"')
-            print(u'Sizes: o->Original, q->150x150, k->2048x???')
+            print('Username not found, run "./ficr <username> <size>"')
+            print('Sizes: o->Original, q->150x150, k->2048x???')
             exit(1)
         else:
             username = sys.argv[1]
             try:
                 size = sys.argv[2]     # Picture-Size (o->Original, q->150x150, k->2048x???)
-            except:
+                if size not in self.__valid_sizes:
+                    size = u'o'
+            except IndexError:
                 size = u'o'
         return [username, size]
 
     def use_photostream(self):
         try:
             from pyquery import PyQuery as pq
-        except:
+        except ImportError:
             print('please install pyQuery: pip install pyquery')
         doc = pq(url='%s%s' % (self.photostream_url, self.__username))
-        for d in doc('.photo-display-item'):
-            doc = pq(url='%s/%s/%s/sizes/%s/' % (self.photostream_url, self.__username,d.attrib['data-photo-id'],self.__size))
+        for _ in doc('.photo-display-item'):
+            doc = pq(url='%s/%s/%s/sizes/%s/' % (self.photostream_url,
+                                                 self.__username,
+                                                 _.attrib['data-photo-id'],
+                                                 self.__size))
             photo_title = u'%s' % doc('meta[name=title]').attr("content")
             link = doc('#allsizes-photo').children().attr('src')
             self.prepare_download(link, photo_title)
@@ -65,14 +74,18 @@ class Fickr(object):
     def use_flickit(self):
         response = urllib.urlopen('%s%s' % (self.flickrit_url, self.__username))
         data = json.load(response)
+        if self.__size == 'z':
+            key = 'url_z'
+        else:
+            key = 'url_o'
         for photo in data:
-            self.prepare_download(photo['url_o'], photo['title'])
+            self.prepare_download(photo[key], photo['title'])
 
     def get_photos(self):
         try:
-            print('use flickrit: %s\n' % self.flickrit_url)
+            print('use flickrit: %s\nit only supports size o and z' % self.flickrit_url)
             self.use_flickit()
-        except:
+        except Exception:
             print('error flickrit, parse: %s\n' % self.photostream_url)
             self.use_photostream()
 
