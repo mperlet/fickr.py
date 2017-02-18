@@ -1,4 +1,4 @@
-## fickr
+## fickr ![pylint Score](http://localhost:8000/badges/8.19.svg)
 > download all public flickr-photos from a user
 
 ## Installation
