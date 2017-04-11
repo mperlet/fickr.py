@@ -1,4 +1,4 @@
-## fickr ![pylint Score](http://www.mperlet.de/pybadge/badges/8.19.svg)
+## fickr ![pylint Score](https://mperlet.github.io/pybadge/badges/5.44.svg)
 > download all public flickr-photos from a user
 
 ## Installation
