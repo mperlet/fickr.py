@@ -5,14 +5,21 @@ import sys
 import os
 import re
 import unicodedata
-import urllib
+import sys
+
+if sys.version_info[0] == 3:
+    from urllib.request import urlopen
+    from urllib.request import urlretrieve
+else:
+    from urllib import urlopen
+    from urllib import urlretrieve
 import os.path
 import json
 
 class Fickr(object):
 
     photostream_url = u'http://www.flickr.com/photos/'
-    flickrit_url = u'http://f.pboehm.org/photos/'
+    flickrit_url = u'https://flickrit.pboehm.org/photos/'
 
     def __init__(self):
         self.__username, self.__size = self.get_name_and_quality()
@@ -28,7 +35,7 @@ class Fickr(object):
         return value
 
     def download_pic(self, url, name):
-        urllib.urlretrieve(url, name)
+        urlretrieve(url, name)
 
     def get_name_and_quality(self):
         if len(sys.argv) == 1:
@@ -72,7 +79,7 @@ class Fickr(object):
             print(u'Exists:   %s' % photo_title)
 
     def use_flickit(self):
-        response = urllib.urlopen('%s%s' % (self.flickrit_url, self.__username))
+        response =  urlopen('%s%s' % (self.flickrit_url, self.__username))
         data = json.load(response)
         if self.__size == 'z':
             key = 'url_z'
