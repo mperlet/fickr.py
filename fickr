@@ -6,6 +6,7 @@ import os
 import re
 import unicodedata
 import sys
+import codecs
 
 if sys.version_info[0] == 3:
     from urllib.request import urlopen
@@ -80,7 +81,8 @@ class Fickr(object):
 
     def use_flickit(self):
         response =  urlopen('%s%s' % (self.flickrit_url, self.__username))
-        data = json.load(response)
+        reader = codecs.getreader("utf-8")
+        data = json.load(reader(response))
         if self.__size == 'z':
             key = 'url_z'
         else:

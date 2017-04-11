@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "fickr",
-    version = "0.0.4",
+    version = "0.0.6",
     author = "Mathias Perlet",
     author_email = "mathias@mperlet.de",
     description = ("Download all flickr photos from a user"),
